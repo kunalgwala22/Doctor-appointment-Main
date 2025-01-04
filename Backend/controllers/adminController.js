@@ -6,6 +6,7 @@ import validator from "validator"
     import {v2 as cloudinary} from "cloudinary"
 import doctorModel from "../modals/doctorModel.js"
 import jwt from "jsonwebtoken"
+import appointmentModel from "../modals/appointmentModel.js"
 
 
 const  addDoctor = async(req,res)=>{
@@ -100,5 +101,37 @@ const allDoctors = async(req,res)=>{
         res.json({success:false,message:error.message})
     }
 }
+//API to get all doctors appointments
+const appointmentsAdmin=async(req,res)=>{
+    try {
+        const appointments=await appointmentModel.find({})
+        res.json({success:true,appointments})
 
-export {addDoctor,loginAdmin,allDoctors}  
+        
+    } catch (error) {
+        res.json({success:false,message:error.message})
+    }
+}
+const appointmentCancel=async(req,res)=>{
+    try {
+        const {appointmentId}=req.body
+
+        const appointmentData=await appointmentModel.findById(appointmentId)
+
+        await appointmentModel.findByIdAndUpdate(appointmentId,{cancelled:true})
+
+        //releasing doctor slot
+        const {docId,slotDate,slotTime}=appointmentData
+        const doctorData = await doctorModel.findById(docId)
+        let slot_booked=doctorData.slot_booked
+        slot_booked[slotDate]=slot_booked[slotDate].filter(e=>e!==slotTime)
+        await doctorModel.findByIdAndUpdate(docId,{slot_booked})
+        res.json({success:true,message:"Appointment Canelled"})
+
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+}
+
+export {addDoctor,loginAdmin,allDoctors,appointmentsAdmin,appointmentCancel}  
