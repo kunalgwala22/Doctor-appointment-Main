@@ -83,9 +83,12 @@ const MyAppointment = () => {
                     </div>
                     <div></div>
                     <div className='flex flex-col gap-2 jutify-end '>
-                      {!item.cancelled &&<button className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white  transition-all duration-300' >Pay online</button>}
-                     {!item.cancelled &&  <button onClick={()=>cancelAppointment(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white  transition-all duration-300' >Cancel Appointment</button>}
-                     {item.cancelled && <button onClick={()=>deleteAppointmentHistory(item._id)} className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment Cancelled</button>}           
+                      {!item.cancelled && !item.isComplete && <button className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white  transition-all duration-300' >Pay online</button>}
+                     {!item.cancelled && !item.isComplete &&  <button onClick={()=>cancelAppointment(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white  transition-all duration-300' >Cancel Appointment</button>}
+                     {item.cancelled && !item.isComplete && <button onClick={()=>deleteAppointmentHistory(item._id)} className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment Cancelled</button>}           
+                     {
+                      item.isComplete && <button className='sm:min-w-48 py-2 border border-green-500 rounded text-green-500'>Completed</button>
+                     }
  </div>
                 </div>
             ))

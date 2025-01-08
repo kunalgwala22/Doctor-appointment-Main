@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from 'react'
 import { AdminContext } from '../../context/AdminContext'
 import { AppContext } from '../../context/AppContext'
-import { assets } from '../../../../Frontend/src/assets/assets'
+import { assets } from '../../assets/assets'
+
 
 const AllAppointments = () => {
   const {aToken,appointments,getAllAppointments,cancelAppointment}=useContext(AdminContext)
@@ -43,8 +44,11 @@ const {calculateAge,slotDateFormat,currency}=useContext(AppContext)
                 {
                   item.cancelled
                   ?<p className='text-red-400 text-xs font-medium'>Cancelled</p>
-                  :  <img onClick={()=>cancelAppointment(item._id)} className='w-8 cursor-pointer bg-red-500'  src={assets.cross_icon} alt="" />
+                  : item.isComplete
+                  ?<p className='text-green-400 text-xs font-medium'>Completed</p>
+                  : <img onClick={()=>cancelAppointment(item._id)}  className='w-10 cursor-pointer'    src={assets.cancel_icon} alt="" />
                 }
+                
                
               </div>
           ))
