@@ -84,13 +84,18 @@ const Login = () => {
             value={password}
           />
         </div>
+        {
+          state==="Sign Up" ? <b></b> 
+          :<b className="cursor-pointer"  onClick={()=>navigate('/reset-password')}>Forgot Password</b>
+        }
         <button
           className="bg-primary text-white w-full py-2 rounded-md text-base"
-          type="submit"
+          type="submit" 
         >
           {state === "Sign Up" ? "Create Account" : "Login"}
         </button>
         {state === "Sign Up" ? (
+
           <p>
             Already have an account?
             <span
@@ -113,6 +118,8 @@ const Login = () => {
             </span>
           </p>
         )}
+
+      
 
       </div>
     </form>

@@ -5,6 +5,9 @@ import userModel from "../modals/userModel.js"
 import {v2 as cloudinary} from "cloudinary"
 import doctorModel from "../modals/doctorModel.js"
 import appointmentModel from "../modals/appointmentModel.js"
+import transporter from '../config/nodemailer.js';
+
+
 //api to register user
 
 const registerUser=async(req,res)=>{
@@ -218,5 +221,71 @@ const deleteAppointmentHistory=async(req,res)=>{
         res.json({success:false,message:error.message})
     }
 }
+
+//api to make payment
+export const sendResetOtp=async(req,res)=>{
+    const {email}=req.body;
+
+    if(!email){
+        return res.json({success:false,message:'email is required'})
+    }
+    try {
+        const user=await userModel.findOne({email});
+        if(!user){
+        return res.json({success:false,message:'User not found'})
+        }
+
+        const otp= String( Math.floor(100000 +Math.random()*900000));
+        user.resetOtp=otp;
+        user.resetOtpExpireAt=Date.now()+15*60*1000;
+        await user.save()
+
+        //send a email
+   const mailOptions= {
+    from:process.env.SENDER_EMAIL,
+    to:user.email,
+    subject:'Password reset OTP',
+    text:`your OTP for reseting your Password is :${otp}. reset your password using this OTP`
+   }
+
+   await transporter.sendMail(mailOptions)
+   return res.json({success:true,message:'Otp sent to your email'})
+
+    } catch (error) {
+        return res.json({success:false,message:error.message})
+    }
+}
+
+//reset user password
+export const resetPassword=async(req,res)=>{
+    const {email,otp,newPassword}=req.body;
+    if(!email||!otp || !newPassword){
+        return res.json({success:false,message:'email,OTP,and new password are required'})
+    }
+    try {
+        const user = await userModel.findOne({email})
+        if(!user){
+            return res.json({success:false,message:'user not found'})
+        }
+        if(user.resetOtp===""||user.resetOtp!==otp){
+            return res.json({success:false,message:'Invalid OTP'})
+        }
+        if(user.resetOtpExpireAt <Date.now()){
+            return res.json({success:false,message:'OTP is expired'})
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword,10)
+        user.password=hashedPassword;
+        user.resetOtp=""
+        user.resetOtpExpireAt=0
+
+        await user.save();
+        res.json({success:true,message:"Password has been reset Successfully "})
+    } catch (error) {
+        return res.json({success:false,message:error.message})
+    }
+}
+  
+
 
 export {registerUser,loginUser,getProfile,updateProfile,bookAppointment,listAppointment,cancelAppointment,deleteAppointmentHistory}
