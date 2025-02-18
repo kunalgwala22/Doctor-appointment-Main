@@ -13,7 +13,7 @@ import Appointment from './pages/Appointment'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import ResetPassword from './pages/ResetPassword';
-import CheckoutSuccess from './pages/CheckoutSuccess'
+
 const App = () => {
  
   return (
@@ -33,8 +33,10 @@ const App = () => {
       <Route path='/my-appointment' element={<MyAppointment />} />
       <Route path='/appointment/:docId' element={<Appointment />} />
       <Route path='/reset-password' element={<ResetPassword/>} />
+      
+      
 
-      <Route path='/checkout-success' element={<CheckoutSuccess/>} />
+      
   
   
     </Routes>
