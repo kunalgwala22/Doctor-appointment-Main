@@ -17,7 +17,7 @@ const port=process.env.PORT || 4000
 
 //middlewares
 app.use(express.json())
-const allowedOrigins=['http://localhost:5173']
+const allowedOrigins=['https://doctor-appointment-main-gamma.vercel.app']
 app.use(cors({origin:allowedOrigins ,credentials:true}));
 
 //api endpoints 
